@@ -24,8 +24,8 @@
 // @include        http*://*.deepbassnine.com/upload.php*
 // @include        http*://*.deepbassnine.com/requests.php*
 // @include        http*://*.deepbassnine.com/torrents.php*
-// @updateURL      https://github.com/ZexWoo/yadg-pth-userscript/raw/master/dic-yadg.js
-// @downloadURL    https://github.com/ZexWoo/yadg-pth-userscript/raw/master/dic-yadg.js
+// @updateURL      https://github.com/ZexWoo/yadg-pth-userscript/raw/master/dic_yadg.user.js
+// @downloadURL    https://github.com/ZexWoo/yadg-pth-userscript/raw/master/dic_yadg.user.js
 // @translator     ZexWoo
 // @license MIT
 // ==/UserScript==
