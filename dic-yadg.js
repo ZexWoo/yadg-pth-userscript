@@ -2,7 +2,7 @@
 // @id             pth-yadg
 // @name           DIC YADG
 // @description    此脚本能将在线描述生成器 YADG (http://yadg.cc) 集成进来 - 感谢 Slack06
-// @license        https://github.com/SavageCore/yadg-pth-userscript/blob/master/LICENSE
+// @license        https://github.com/ZexWoo/yadg-pth-userscript/blob/master/LICENSE
 // @version        1.9.1
 // @namespace      yadg
 // @grant          GM_xmlhttpRequest
@@ -24,8 +24,8 @@
 // @include        http*://*.deepbassnine.com/upload.php*
 // @include        http*://*.deepbassnine.com/requests.php*
 // @include        http*://*.deepbassnine.com/torrents.php*
-// @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
-// @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
+// @updateURL      https://github.com/ZexWoo/yadg-pth-userscript/raw/master/dic-yadg.js
+// @downloadURL    https://github.com/ZexWoo/yadg-pth-userscript/raw/master/dic-yadg.js
 // @translator     ZexWoo
 // @license MIT
 // ==/UserScript==
