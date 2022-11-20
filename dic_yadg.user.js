@@ -3404,7 +3404,7 @@ yadg = {
             }
 
             if (ul.childNodes.length === 0) {
-              yadg.printError("Sorry, there were no matches.");
+              yadg.printError("抱歉，没有匹配到任何结果。");
             } else {
               yadg.responseDiv.innerHTML = "";
               yadg.responseDiv.append(ul);
