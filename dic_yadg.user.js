@@ -18,6 +18,9 @@
 // @include        http*://*dicmusic.club/upload.php*
 // @include        http*://*dicmusic.club/requests.php*
 // @include        http*://*dicmusic.club/torrents.php*
+// @include        http*://*dicmusic.com/upload.php*
+// @include        http*://*dicmusic.com/requests.php*
+// @include        http*://*dicmusic.com/torrents.php*
 // @include        http*://*d3si.net/upload.php*
 // @include        http*://*d3si.net/requests.php*
 // @include        http*://*d3si.net/torrents.php*
