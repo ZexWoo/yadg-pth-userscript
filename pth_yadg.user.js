@@ -1,9 +1,9 @@
 // ==UserScript==
-// @id             pth-yadg
-// @name           RED YADG
-// @description    This script provides integration with online description generator YADG (http://yadg.cc) - Credit to Slack06
+// @id             pth-yadg-zh
+// @name           DIC YADG (zh)
+// @description    此脚本能将在线描述生成器 YADG (http://yadg.cc) 集成进来 - 感谢 Slack06
 // @license        https://github.com/SavageCore/yadg-pth-userscript/blob/master/LICENSE
-// @version        1.9.0
+// @version        1.9.2
 // @namespace      yadg
 // @grant          GM_xmlhttpRequest
 // @grant          GM.xmlHttpRequest
@@ -21,6 +21,9 @@
 // @include        http*://*dicmusic.club/upload.php*
 // @include        http*://*dicmusic.club/requests.php*
 // @include        http*://*dicmusic.club/torrents.php*
+// @include        http*://*dicmusic.com/upload.php*
+// @include        http*://*dicmusic.com/requests.php*
+// @include        http*://*dicmusic.com/torrents.php*
 // @include        http*://*waffles.ch/upload.php*
 // @include        http*://*waffles.ch/requests.php*
 // @include        http*://*d3si.net/upload.php*
@@ -29,13 +32,15 @@
 // @include        http*://*.deepbassnine.com/upload.php*
 // @include        http*://*.deepbassnine.com/requests.php*
 // @include        http*://*.deepbassnine.com/torrents.php*
-// @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
-// @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
+// @updateURL      https://github.com/ZexWoo/yadg-pth-userscript/raw/master/pth_yadg.user.js
+// @downloadURL    https://github.com/ZexWoo/yadg-pth-userscript/raw/master/pth_yadg.user.js
+// @translator     ZexWoo
+
 // ==/UserScript==
 
 // --------- USER SETTINGS START ---------
 
-/*	global window	unsafeWindow document GM JSandbox formatName AddArtistField RemoveArtistField Blob alert Image */
+/*	global window	unsafeWindow document GM JSandbox formatName AddArtistField RemoveArtistField alert Image */
 /*	eslint max-depth: 'off', block-scoped-var: 'off', no-loop-func: 'off', no-alert: 'off', unicorn/prefer-module: 'off', no-bitwise: 'off' */
 
 /*
@@ -74,7 +79,7 @@ function fetchImage(link, callback) {
 	}
 
 	switch (true) {
-		case /discogs/.test(link):
+		case /discogs/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -94,6 +99,8 @@ function fetchImage(link, callback) {
 				},
 			});
 			break;
+		}
+
 		case /music.apple/.test(link): {
 			const regex = /apple\.com\/(?:([a-z]{2,3})\/)?.*\/(?:(\d+)|id(\d*))/;
 			const result = regex.exec(link);
@@ -168,7 +175,7 @@ function fetchImage(link, callback) {
 			break;
 		}
 
-		case /beatport/.test(link):
+		case /beatport/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -177,17 +184,24 @@ function fetchImage(link, callback) {
 						const container = document.implementation.createHTMLDocument()
 							.documentElement;
 						container.innerHTML = response.responseText;
-						if (typeof callback === 'function') {
-							callback(
-								container.querySelectorAll(
-									'div.interior-release-chart-artwork-parent > img',
-								)[0].src,
-							);
+						try {
+							const script = container.querySelector('#__NEXT_DATA__');
+							const data = JSON.parse(script.textContent);
+							const {dynamic_uri} = data.props.pageProps.release.image; // eslint-disable-line camelcase
+							const size = factory.getCoverSize().value;
+							const resolution = size === 'large' ? 1400 : 500;
+							const uri = dynamic_uri.replaceAll(/{([hw])}/g, resolution); // eslint-disable-line camelcase
+							callback(uri);
+						} catch (error) {
+							console.log(error);
+							callback(false);
 						}
 					}
 				},
 			});
 			break;
+		}
+
 		case /musicbrainz/.test(link): {
 			const regex = /release\/(.*)/;
 			const {1: id} = regex.exec(link);
@@ -209,7 +223,7 @@ function fetchImage(link, callback) {
 			break;
 		}
 
-		case /junodownload/.test(link):
+		case /junodownload/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -225,7 +239,9 @@ function fetchImage(link, callback) {
 				},
 			});
 			break;
-		case /metal-archives/.test(link):
+		}
+
+		case /metal-archives/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -246,7 +262,9 @@ function fetchImage(link, callback) {
 				},
 			});
 			break;
-		case /allmusic/.test(link):
+		}
+
+		case /allmusic/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -267,6 +285,8 @@ function fetchImage(link, callback) {
 				},
 			});
 			break;
+		}
+
 		case /deezer/.test(link): {
 			const regex = /\.com\/(\w+\/)?(album)\/(\d+)/g;
 			const helper = regex.exec(link);
@@ -292,8 +312,9 @@ function fetchImage(link, callback) {
 			break;
 		}
 
-		default:
+		default: {
 			break;
+		}
 	}
 }
 
@@ -315,8 +336,9 @@ function pthImgIt() {
 			break;
 		}
 
-		default:
+		default: {
 			break;
+		}
 	}
 
 	if (pthImgIt && imgElement) {
@@ -376,8 +398,9 @@ function insertImage(img, callback) {
 			break;
 		}
 
-		default:
+		default: {
 			break;
+		}
 	}
 }
 
@@ -407,7 +430,7 @@ function LocalStorageWrapper(appPrefix) {
 	const localStorage = window.localStorage || unsafeWindow.localStorage;
 
 	const isLocalStorageAvailable = function () {
-		return typeof localStorage !== 'undefined';
+		return localStorage !== undefined;
 	};
 
 	const getKeyPrefix = function () {
@@ -886,23 +909,23 @@ factory = {
 		},
 		{
 			name: 'dic_upload',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/upload\.php.*/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/upload\.php.*/i,
 		},
 		{
 			name: 'dic_edit',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?action=editgroup&groupid=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/torrents\.php\?action=editgroup&groupid=.*/i,
 		},
 		{
 			name: 'dic_request',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=new/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/requests\.php\?action=new/i,
 		},
 		{
 			name: 'dic_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=edit&id=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/requests\.php\?action=edit&id=.*/i,
 		},
 		{
 			name: 'dic_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?id=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/torrents\.php\?id=.*/i,
 		},
 		{
 			name: 'waffles_upload',
@@ -1074,7 +1097,7 @@ factory = {
 
 				factory.saveSettings();
 
-				alert('Settings saved successfully.');
+				alert('设置保存成功。');
 			});
 		}
 
@@ -1086,7 +1109,7 @@ factory = {
 
 				yadgUtil.storage.removeAll();
 
-				alert('Cache cleared. Please reload the page for this to take effect.');
+				alert('缓存已清除，请刷新页面以使改动生效。');
 			});
 		}
 
@@ -1141,7 +1164,7 @@ factory = {
 	},
 
 	makeReplaceDescriptionSettingsKey(subKey) {
-		return this.KEY_REPLACE_DESCRIPTION + subKey.replace(/_/g, '');
+		return this.KEY_REPLACE_DESCRIPTION + subKey.replaceAll('_', '');
 	},
 
 	// Disable fields when groupid set
@@ -1431,13 +1454,15 @@ factory = {
 			switch (this.currentLocation) {
 				case 'waffles_upload':
 				case 'waffles_upload_new':
-				case 'waffles_request':
+				case 'waffles_request': {
 					formatSelect.selectedIndex = formatOffsets[defaultWafflesFormat];
 					break;
+				}
 
-				default:
+				default: {
 					formatSelect.selectedIndex = formatOffsets[defaultPTHFormat];
 					break;
+				}
 			}
 		}
 	},
@@ -1605,20 +1630,23 @@ factory = {
 
 		// Location specific styles will go here
 		switch (this.currentLocation) {
-			case 'waffles_upload':
+			case 'waffles_upload': {
 				yadgUtil.addCSS(
 					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }',
 				);
 				break;
+			}
 
-			case 'waffles_request':
+			case 'waffles_request': {
 				yadgUtil.addCSS(
 					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }',
 				);
 				break;
+			}
 
-			default:
+			default: {
 				break;
+			}
 		}
 	},
 
@@ -1628,23 +1656,23 @@ factory = {
 		const scraperSelectHTML
 			= '<select name="yadg_scraper" id="yadg_scraper"></select>';
 		let optionsHTML
-			= '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
+			= '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">模板:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">版本:</label><select name="yadg_target" id="yadg_target"><option value="original">原始</option><option value="other">其他</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">描述:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">专辑</option><option value="release">发行</option><option value="both">兼有</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API 令牌 (<a href="https://yadg.cc/api/token" target="_blank">点此获取</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">替换本页的描述</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">自动获取专辑封面 (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
 		optionsHTML
-			+= '<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">Cover size: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">Large</option><option value="medium">Medium</option></select></div>';
+			+= '<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">封面尺寸: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">大</option><option value="medium">中</option></select></div>';
 		if (document.querySelectorAll('.rehost_it_cover')[0]) {
 			optionsHTML
-				+= '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
+				+= '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">自动转存到 <a href="https://dicmusic.com/forums.php?action=viewthread&threadid=25">PTPIMG</a></label></div>';
 		}
 
-		optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
-		optionsHTML += '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label></div>		';
-		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
-		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" />';
+		optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">自动预览描述</label></div>';
+		optionsHTML += '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">根据链接自动识别正确的信息源</label></div>		';
+		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="将当前选中的信息源和模板存储为该站的默认选项并保存 API 令牌。">保存设置</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">清除缓存</a></div></div>';
+		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" placeholder="请在此输入搜索关键词，或是粘贴专辑信息网站的链接"/>';
 		const responseDivHTML = '<div id="yadg_response"></div>';
 		const toggleOptionsLinkHTML
-			= '<a id="yadg_toggle_options" href="#">Toggle options</a>';
+			= '<a id="yadg_toggle_options" href="#">设置</a>';
 		const scraperInfoLink
-			= '<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
+			= '<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="获取更多关于可用信息源的信息">[?]</a>';
 
 		switch (this.currentLocation) {
 			case 'db9_upload':
@@ -1793,9 +1821,10 @@ factory = {
 				return tr;
 			}
 
-			default:
+			default: {
 				// This should actually never happen
 				return document.createElement('div');
+			}
 		}
 	},
 
@@ -1834,10 +1863,13 @@ factory = {
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
 				const [addArtistsBox] = document.querySelectorAll('.box_addartists');
-				addArtistsBox.parentNode.insertBefore(
-					element,
-					addArtistsBox.nextSibling.nextSibling,
-				);
+				if (addArtistsBox) {
+					addArtistsBox.parentNode.insertBefore(
+						element,
+						addArtistsBox.nextSibling.nextSibling,
+					);
+				}
+
 				break;
 			}
 
@@ -1890,8 +1922,9 @@ factory = {
 				break;
 			}
 
-			default:
+			default: {
 				break;
+			}
 		}
 	},
 
@@ -1903,7 +1936,7 @@ factory = {
 			case 'ops_upload':
 			case 'dic_upload':
 			case 'd3si_upload':
-			case 'pth_upload':
+			case 'pth_upload': {
 				if (factory.getDescriptionTargetSelect().value === 'album') {
 					return document.querySelector('#album_desc');
 				}
@@ -1920,26 +1953,29 @@ factory = {
 				}
 
 				break;
+			}
 
 			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
-			case 'pth_edit':
+			case 'pth_edit': {
 				return document.getElementsByName('body')[0];
+			}
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
-			case 'pth_torrent_overview':
+			case 'pth_torrent_overview': {
 				if (!Object.prototype.hasOwnProperty.call(this, 'dummybox')) {
 					this.dummybox = document.createElement('div');
 				}
 
 				return this.dummybox;
+			}
 
 			case 'nwcd_request':
 			case 'nwcd_request_edit':
@@ -1952,21 +1988,26 @@ factory = {
 			case 'd3si_request':
 			case 'd3si_request_edit':
 			case 'pth_request':
-			case 'pth_request_edit':
+			case 'pth_request_edit': {
 				return document.getElementsByName('description')[0];
+			}
 
-			case 'waffles_upload':
+			case 'waffles_upload': {
 				return document.querySelector('#descr');
+			}
 
-			case 'waffles_upload_new':
+			case 'waffles_upload_new': {
 				return document.querySelector('#id_descr');
+			}
 
-			case 'waffles_request':
+			case 'waffles_request': {
 				return document.getElementsByName('information')[0];
+			}
 
-			default:
+			default: {
 				// That should actually never happen
 				return document.createElement('div');
+			}
 		}
 	},
 
@@ -1974,7 +2015,7 @@ factory = {
 	getFormFillFunction() {
 		const currentTarget = factory.getTargetSelect().value;
 		switch (this.currentLocation) {
-			case 'db9_upload': return rawData => {
+			case 'db9_upload': { return rawData => {
 				const title = document.querySelector('#title');
 				const label = document.querySelector('#recordlabel');
 				const catalog = document.querySelector('#catalogue_number');
@@ -2046,6 +2087,7 @@ factory = {
 					}
 				}
 			};
+			}
 
 			case 'd3si_upload':
 			case 'pth_upload': {
@@ -2071,22 +2113,27 @@ factory = {
 					if (/music.apple/.test(rawData.url)) {
 						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
-							case /.+ - Single$/.test(rawData.title):
+							case /.+ - Single$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
 
 								break;
-							case /.+ - EP$/.test(rawData.title):
+							}
+
+							case /.+ - EP$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
 
 								break;
-							default:
+							}
+
+							default: {
 								break;
+							}
 						}
 					}
 
@@ -2252,22 +2299,27 @@ factory = {
 					if (/itunes/.test(rawData.url)) {
 						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
-							case /.+ - Single$/.test(rawData.title):
+							case /.+ - Single$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
 
 								break;
-							case /.+ - EP$/.test(rawData.title):
+							}
+
+							case /.+ - EP$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
 
 								break;
-							default:
+							}
+
+							default: {
 								break;
+							}
 						}
 					}
 
@@ -2413,22 +2465,27 @@ factory = {
 					if (/itunes/.test(rawData.url)) {
 						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
-							case /.+ - Single$/.test(rawData.title):
+							case /.+ - Single$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
 
 								break;
-							case /.+ - EP$/.test(rawData.title):
+							}
+
+							case /.+ - EP$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
 
 								break;
-							default:
+							}
+
+							default: {
 								break;
+							}
 						}
 					}
 
@@ -2574,22 +2631,27 @@ factory = {
 					if (/itunes/.test(rawData.url)) {
 						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
-							case /.+ - Single$/.test(rawData.title):
+							case /.+ - Single$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
 
 								break;
-							case /.+ - EP$/.test(rawData.title):
+							}
+
+							case /.+ - EP$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
 
 								break;
-							default:
+							}
+
+							default: {
 								break;
+							}
 						}
 					}
 
@@ -2830,7 +2892,7 @@ factory = {
 			}
 
 			case 'db9_request':
-			case 'db9_request_edit': return rawData => {
+			case 'db9_request_edit': { return rawData => {
 				const title = document.querySelector('#title');
 				const label = document.querySelector('#recordlabel');
 				const catalog = document.querySelector('#catalogue_number');
@@ -2879,6 +2941,7 @@ factory = {
 					}
 				}
 			};
+			}
 
 			case 'nwcd_request':
 			case 'nwcd_request_edit':
@@ -3093,9 +3156,10 @@ factory = {
 				return f;
 			}
 
-			default:
+			default: {
 				// That should actually never happen
 				return function () {};
+			}
 		}
 	},
 };
@@ -3181,9 +3245,9 @@ yadg = {
 	baseURI: '/api/v2/',
 
 	standardError:
-		'Sorry, an error occured. Please try again. If this error persists check on <a href="https://yadg.cc">yadg.cc</a> before reporting an error with the userscript.',
+		'不好意思，出错了，请再试一次。如果错误持续发生，请在认定脚本有问题前先检查一下 <a href="https://yadg.cc">yadg.cc</a> 。',
 	authenticationError:
-		'Your API token is invalid. Please provide a valid API token or remove the current one.',
+		'你的 API 令牌无效。请换一个有效的令牌或删除无效的。',
 	lastStateError: false,
 
 	isBusy: false,
@@ -3344,7 +3408,7 @@ yadg = {
 						}
 
 						if (ul.childNodes.length === 0) {
-							yadg.printError('Sorry, there were no matches.');
+							yadg.printError('抱歉，没有匹配到任何结果。');
 						} else {
 							yadg.responseDiv.innerHTML = '';
 							yadg.responseDiv.append(ul);
@@ -3359,14 +3423,14 @@ yadg = {
 
 					case 'NotFoundResult': {
 						yadg.printError(
-							'I could not find the release with the given ID. You may want to try again with another one.',
+							'无法根据给定编号找到任何发行。请换一个试试。',
 						);
 
 						break;
 					}
 
 					default: {
-						yadg.printError('Something weird happened. Please try again');
+						yadg.printError('出了点问题，请再试一次。');
 					}
 				}
 
@@ -3408,7 +3472,7 @@ yadg = {
 	busyStart() {
 		this.isBusy = true;
 		this.button.setAttribute('disabled', true);
-		this.button.value = 'Please wait...';
+		this.button.value = '请稍候……';
 		this.input.setAttribute('disabled', true);
 		this.scraperSelect.setAttribute('disabled', true);
 		this.formatSelect.setAttribute('disabled', true);
@@ -3534,22 +3598,28 @@ yadg = {
 
 			for (let i = 0; i < result.tags.length; i++) {
 				switch (result.tags[i]) {
-					case 'Techno (Peak Time / Driving)':
+					case 'Techno (Peak Time / Driving)': {
 						result.tags[i] = 'Techno';
 						break;
-					case 'Techno (Raw / Deep / Hypnotic)':
+					}
+
+					case 'Techno (Raw / Deep / Hypnotic)': {
 						result.tags[i] = 'Dub Techno';
 						break;
-					case 'Minimal / Deep Tech':
+					}
+
+					case 'Minimal / Deep Tech': {
 						result.tags[i] = 'Tech House';
 						break;
+					}
 
-					default:
+					default: {
 						break;
+					}
 				}
 
-				result.tag_string += result.tags[i].replace(/\s+/g, '.').replace(/\bn\b|&/, 'and'); // eslint-disable-line camelcase
-				result.tag_string_nodots += result.tags[i].replace(/\s+/g, ' '); // eslint-disable-line camelcase
+				result.tag_string += result.tags[i].replaceAll(/\s+/g, '.').replace(/\bn\b|&/, 'and'); // eslint-disable-line camelcase
+				result.tag_string_nodots += result.tags[i].replaceAll(/\s+/g, ' '); // eslint-disable-line camelcase
 				if (i !== result.tags.length - 1) {
 					result.tag_string += ', '; // eslint-disable-line camelcase
 					result.tag_string_nodots += ', '; // eslint-disable-line camelcase
