@@ -3,7 +3,7 @@
 // @name           DIC YADG
 // @description    此脚本能将在线描述生成器 YADG (http://yadg.cc) 集成进来 - 感谢 Slack06
 // @license        https://github.com/ZexWoo/yadg-pth-userscript/blob/master/LICENSE
-// @version        1.9.1
+// @version        1.9.2
 // @namespace      yadg
 // @grant          GM_xmlhttpRequest
 // @grant          GM.xmlHttpRequest
