@@ -1667,7 +1667,7 @@ factory = {
 		optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">自动预览描述</label></div>';
 		optionsHTML += '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">根据链接自动识别正确的信息源</label></div>		';
 		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="将当前选中的信息源和模板存储为该站的默认选项并保存 API 令牌。">保存设置</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">清除缓存</a></div></div>';
-		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" placeholder="请在此粘贴专辑信息网站的链接"/>';
+		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" placeholder="请在此输入搜索关键词，或是粘贴专辑信息网站的链接"/>';
 		const responseDivHTML = '<div id="yadg_response"></div>';
 		const toggleOptionsLinkHTML
 			= '<a id="yadg_toggle_options" href="#">设置</a>';
