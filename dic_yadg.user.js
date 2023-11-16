@@ -15,9 +15,6 @@
 // @include        http*://*orpheus.network/upload.php*
 // @include        http*://*orpheus.network/requests.php*
 // @include        http*://*orpheus.network/torrents.php*
-// @include        http*://*dicmusic.club/upload.php*
-// @include        http*://*dicmusic.club/requests.php*
-// @include        http*://*dicmusic.club/torrents.php*
 // @include        http*://*dicmusic.com/upload.php*
 // @include        http*://*dicmusic.com/requests.php*
 // @include        http*://*dicmusic.com/torrents.php*
@@ -899,25 +896,25 @@ factory = {
     },
     {
       name: "dic_upload",
-      regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/upload\.php.*/i,
+      regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/upload\.php.*/i,
     },
     {
       name: "dic_edit",
       regex:
-        /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?action=editgroup&groupid=.*/i,
+        /http(s)?:\/\/(.*\.)?dicmusic\.com\/torrents\.php\?action=editgroup&groupid=.*/i,
     },
     {
       name: "dic_request",
-      regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=new/i,
+      regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/requests\.php\?action=new/i,
     },
     {
       name: "dic_request_edit",
       regex:
-        /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=edit&id=.*/i,
+        /http(s)?:\/\/(.*\.)?dicmusic\.com\/requests\.php\?action=edit&id=.*/i,
     },
     {
       name: "dic_torrent_overview",
-      regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?id=.*/i,
+      regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/torrents\.php\?id=.*/i,
     },
     {
       name: "waffles_upload",
@@ -1656,7 +1653,7 @@ factory = {
       '<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">封面尺寸: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">大</option><option value="medium">中</option></select></div>';
     if (document.querySelectorAll(".rehost_it_cover")[0]) {
       optionsHTML +=
-        '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">自动转存到 <a href="https://dicmusic.club/forums.php?action=viewthread&threadid=25">PTPIMG</a></label></div>';
+        '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">自动转存到 <a href="https://dicmusic.com/forums.php?action=viewthread&threadid=25">PTPIMG</a></label></div>';
     }
 
     optionsHTML +=
