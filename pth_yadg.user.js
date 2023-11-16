@@ -1,7 +1,7 @@
 // ==UserScript==
-// @id             pth-yadg
-// @name           RED YADG
-// @description    This script provides integration with online description generator YADG (http://yadg.cc) - Credit to Slack06
+// @id             pth-yadg-zh
+// @name           DIC YADG (zh)
+// @description    此脚本能将在线描述生成器 YADG (http://yadg.cc) 集成进来 - 感谢 Slack06
 // @license        https://github.com/SavageCore/yadg-pth-userscript/blob/master/LICENSE
 // @version        1.9.2
 // @namespace      yadg
@@ -21,6 +21,9 @@
 // @include        http*://*dicmusic.club/upload.php*
 // @include        http*://*dicmusic.club/requests.php*
 // @include        http*://*dicmusic.club/torrents.php*
+// @include        http*://*dicmusic.com/upload.php*
+// @include        http*://*dicmusic.com/requests.php*
+// @include        http*://*dicmusic.com/torrents.php*
 // @include        http*://*waffles.ch/upload.php*
 // @include        http*://*waffles.ch/requests.php*
 // @include        http*://*d3si.net/upload.php*
@@ -29,8 +32,10 @@
 // @include        http*://*.deepbassnine.com/upload.php*
 // @include        http*://*.deepbassnine.com/requests.php*
 // @include        http*://*.deepbassnine.com/torrents.php*
-// @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
-// @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
+// @updateURL      https://github.com/ZexWoo/yadg-pth-userscript/raw/master/pth_yadg.user.js
+// @downloadURL    https://github.com/ZexWoo/yadg-pth-userscript/raw/master/pth_yadg.user.js
+// @translator     ZexWoo
+
 // ==/UserScript==
 
 // --------- USER SETTINGS START ---------
@@ -1092,7 +1097,7 @@ factory = {
 
 				factory.saveSettings();
 
-				alert('Settings saved successfully.');
+				alert('设置保存成功。');
 			});
 		}
 
@@ -1104,7 +1109,7 @@ factory = {
 
 				yadgUtil.storage.removeAll();
 
-				alert('Cache cleared. Please reload the page for this to take effect.');
+				alert('缓存已清除，请刷新页面以使改动生效。');
 			});
 		}
 
@@ -1651,23 +1656,23 @@ factory = {
 		const scraperSelectHTML
 			= '<select name="yadg_scraper" id="yadg_scraper"></select>';
 		let optionsHTML
-			= '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
+			= '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">模板:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">版本:</label><select name="yadg_target" id="yadg_target"><option value="original">原始</option><option value="other">其他</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">描述:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">专辑</option><option value="release">发行</option><option value="both">兼有</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API 令牌 (<a href="https://yadg.cc/api/token" target="_blank">点此获取</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">替换本页的描述</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">自动获取专辑封面 (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
 		optionsHTML
-			+= '<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">Cover size: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">Large</option><option value="medium">Medium</option></select></div>';
+			+= '<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">封面尺寸: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">大</option><option value="medium">中</option></select></div>';
 		if (document.querySelectorAll('.rehost_it_cover')[0]) {
 			optionsHTML
-				+= '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
+				+= '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">自动转存到 <a href="https://dicmusic.com/forums.php?action=viewthread&threadid=25">PTPIMG</a></label></div>';
 		}
 
-		optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
-		optionsHTML += '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label></div>		';
-		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
-		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" />';
+		optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">自动预览描述</label></div>';
+		optionsHTML += '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">根据链接自动识别正确的信息源</label></div>		';
+		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="将当前选中的信息源和模板存储为该站的默认选项并保存 API 令牌。">保存设置</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">清除缓存</a></div></div>';
+		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" placeholder="请在此粘贴专辑信息网站的链接"/>';
 		const responseDivHTML = '<div id="yadg_response"></div>';
 		const toggleOptionsLinkHTML
-			= '<a id="yadg_toggle_options" href="#">Toggle options</a>';
+			= '<a id="yadg_toggle_options" href="#">设置</a>';
 		const scraperInfoLink
-			= '<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
+			= '<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="获取更多关于可用信息源的信息">[?]</a>';
 
 		switch (this.currentLocation) {
 			case 'db9_upload':
@@ -3240,9 +3245,9 @@ yadg = {
 	baseURI: '/api/v2/',
 
 	standardError:
-		'Sorry, an error occured. Please try again. If this error persists check on <a href="https://yadg.cc">yadg.cc</a> before reporting an error with the userscript.',
+		'不好意思，出错了，请再试一次。如果错误持续发生，请在认定脚本有问题前先检查一下 <a href="https://yadg.cc">yadg.cc</a> 。',
 	authenticationError:
-		'Your API token is invalid. Please provide a valid API token or remove the current one.',
+		'你的 API 令牌无效。请换一个有效的令牌或删除无效的。',
 	lastStateError: false,
 
 	isBusy: false,
@@ -3403,7 +3408,7 @@ yadg = {
 						}
 
 						if (ul.childNodes.length === 0) {
-							yadg.printError('Sorry, there were no matches.');
+							yadg.printError('抱歉，没有匹配到任何结果。');
 						} else {
 							yadg.responseDiv.innerHTML = '';
 							yadg.responseDiv.append(ul);
@@ -3418,14 +3423,14 @@ yadg = {
 
 					case 'NotFoundResult': {
 						yadg.printError(
-							'I could not find the release with the given ID. You may want to try again with another one.',
+							'无法根据给定编号找到任何发行。请换一个试试。',
 						);
 
 						break;
 					}
 
 					default: {
-						yadg.printError('Something weird happened. Please try again');
+						yadg.printError('出了点问题，请再试一次。');
 					}
 				}
 
@@ -3467,7 +3472,7 @@ yadg = {
 	busyStart() {
 		this.isBusy = true;
 		this.button.setAttribute('disabled', true);
-		this.button.value = 'Please wait...';
+		this.button.value = '请稍候……';
 		this.input.setAttribute('disabled', true);
 		this.scraperSelect.setAttribute('disabled', true);
 		this.formatSelect.setAttribute('disabled', true);
