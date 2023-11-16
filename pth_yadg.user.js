@@ -909,23 +909,23 @@ factory = {
 		},
 		{
 			name: 'dic_upload',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/upload\.php.*/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/upload\.php.*/i,
 		},
 		{
 			name: 'dic_edit',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?action=editgroup&groupid=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/torrents\.php\?action=editgroup&groupid=.*/i,
 		},
 		{
 			name: 'dic_request',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=new/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/requests\.php\?action=new/i,
 		},
 		{
 			name: 'dic_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=edit&id=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/requests\.php\?action=edit&id=.*/i,
 		},
 		{
 			name: 'dic_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?id=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.com\/torrents\.php\?id=.*/i,
 		},
 		{
 			name: 'waffles_upload',
